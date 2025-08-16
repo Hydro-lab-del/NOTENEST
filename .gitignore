@@ -30,3 +30,6 @@ coverage/
 # Miscellaneous
 *.bak
 *.tmp
+
+# Public folder
+public/
