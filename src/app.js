@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({
     // origin:process.env.CORS_ORIGIN  //to allow the link to excess
-    origin: 'http://localhost:5000',
+    origin: 'https://notenest-junaid.netlify.app/',
     credentials: true
  }));
 
