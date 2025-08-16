@@ -39,7 +39,7 @@ NoteNest is a web application for managing personal notes. Users can register, l
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Hydro-lab-del/NOTENEST
    cd Notenest-v2
    ```
 
