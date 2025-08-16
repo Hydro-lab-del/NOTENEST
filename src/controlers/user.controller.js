@@ -53,8 +53,8 @@ const registeruser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false,       // ✅ must be false for localhost over HTTP
-        sameSite: 'Lax'      // ✅ allows cookies across localhost ports
+        secure: true,         // ✅ required for HTTPS
+        sameSite: 'None'      // ✅ allows cross-origin cookies
     };
 
 
@@ -96,16 +96,11 @@ const loginUser = asyncHandler(async (req, res) => {
     const { refreshToken, accessToken } = await generateAccessAndRefreshTokens(user._id);
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    // const options = {
-    //     httpOnly: true,
-    //     secure: true,
-    //     sameSite: 'None'
 
-    // };
     const options = {
         httpOnly: true,
-        secure: false,       // ✅ must be false for localhost over HTTP
-        sameSite: 'Lax'      // ✅ allows cookies across localhost ports
+        secure: true,         // ✅ required for HTTPS
+        sameSite: 'None'      // ✅ allows cross-origin cookies
     };
 
     return res
@@ -137,15 +132,10 @@ const logoutUser = asyncHandler(async (req, res) => {
         }
     );
     console.log("User ID:", req.user?._id);
-    // const options = {
-    //     httpOnly: true,
-    //     secure: true,
-    //     sameSite: 'None'
-    // };
     const options = {
         httpOnly: true,
-        secure: false,       // ✅ must be false for localhost over HTTP
-        sameSite: 'Lax'      // ✅ allows cookies across localhost ports
+        secure: true,         // ✅ required for HTTPS
+        sameSite: 'None'      // ✅ allows cross-origin cookies
     };
 
     return res
@@ -197,10 +187,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             throw new ApiError(401, "refresh token  expired or already used")
         };
 
-        const { accessToken, refreshToken:newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
+        const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
         const options = {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: 'None'
         };
 
         return res
@@ -220,7 +211,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-export { registeruser, loginUser, logoutUser, getCurrentUser , refreshAccessToken}
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken }
 
 
 
