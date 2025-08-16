@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoteNest</title>
+  <link rel="stylesheet" href="dash.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="logo"><a href="#">NoteNest</a></div>
+      <div class="profile">
+        <!-- <div class="avatar" onclick="toggleDropdown()">JI</div>
+        <div class="dropdown" id="profileDropdown">
+          <p>Junaid Ilyas</p>
+          <button type="submit" id="logoutBtn">Logout</button> -->
+        <div class="avatar" id="avatar" onclick="toggleDropdown()"></div>
+        <div class="dropdown" id="profileDropdown">
+          <p id="profileName">Loading...</p>
+          <button type="submit" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="container"></div>
+
+    <div class="add">
+      <button class="add-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#FFFFFF">
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+        </svg>
+      </button>
+    </div>
+
+    <div id="noteForm" class="note-form-overlay">
+      <div class="note-form-box">
+        <h3>Add a New Note</h3>
+        <form>
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required />
+
+          <label for="content">Content</label>
+          <textarea id="content" name="content" required rows="4"></textarea>
+
+          <div class="form-buttons">
+            <button type="submit">Add Note</button>
+            <button type="button" onclick="toggleForm()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="dash.js"></script>
+</body>
+
+</html>
