@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-import cors from 'cors';
+// import cors from 'cors';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,11 +12,11 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors({
-    // origin:process.env.CORS_ORIGIN  //to allow the link to excess
-    origin: 'https://notenest-junaid.netlify.app',
-    credentials: true
- }));
+// app.use(cors({
+//     // origin:process.env.CORS_ORIGIN  //to allow the link to excess
+//     origin: 'https://notenest-junaid.netlify.app',
+//     credentials: true
+//  }));
 
 // app.get('/', (req, res) => {
 //     res.sendFile(path.join(__dirname, 'public', 'index.html'));
