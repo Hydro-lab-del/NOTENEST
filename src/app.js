@@ -18,15 +18,15 @@ app.use(cookieParser());
 //     credentials: true
 //  }));
 
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// })
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+})
 
 
-// import { verifyJWT } from './middlewares/auth.middleware.js';
-// app.get('/dashboard', verifyJWT, (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'))
-// })
+import { verifyJWT } from './middlewares/auth.middleware.js';
+app.get('/dashboard', verifyJWT, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'dashboard.html'))
+})
 
 
 app.use(express.static(path.join(__dirname, 'public')));
