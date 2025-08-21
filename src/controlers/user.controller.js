@@ -103,6 +103,8 @@ const loginUser = asyncHandler(async (req, res) => {
         sameSite: 'None'      // ✅ allows cross-origin cookies
     };
 
+
+
     return res
         .status(200)
         .cookie("accessToken", accessToken, options)
@@ -211,7 +213,27 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken }
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { username, email } = req.body;
+    if (!username, !email) {
+        throw new ApiError(400, "All  fields are required!")
+    };
+
+    const user = User.findByIdAndUpdate(req.user?._id,
+        {
+            $set: { username, email: email }
+        },
+        { new: true }
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Account details updated Successfully")
+        )
+});
+
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken, updateAccountDetails }
 
 
 
