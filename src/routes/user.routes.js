@@ -9,6 +9,6 @@ router.route('/login').post(loginUser);
 router.route('/logout').post(verifyJWT ,logoutUser);
 router.route('/current-user').get(verifyJWT ,getCurrentUser);
 router.route("/refresh-token").post(refreshAccessToken);
-router.route("/update").post(updateAccountDetails)
+router.route("/update-account").post(updateAccountDetails)
 
 export default router;
