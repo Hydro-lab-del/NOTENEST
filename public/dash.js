@@ -44,13 +44,39 @@ window.addEventListener('click', (e) => {
 });
 
 // --- Image preview
-fileInput.addEventListener('change', () => {
+fileInput.addEventListener('change', async () => {
   const f = fileInput.files?.[0];
   if (!f) return;
+
+  // --- Local Preview
   const url = URL.createObjectURL(f);
   avatarImg.src = url;
   largeImg.src = url;
   toast('Preview updated');
+
+  // --- Upload to Server
+  const formData = new FormData();
+  formData.append("profilePic", f);
+
+  try {
+    const response = await fetch("/api/v1/users/upload-profile-pic", {
+      method: "POST",
+      credentials: "include", // important for cookies
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      toast("Profile picture uploaded successfully");
+      console.log("Updated user:", result.data);
+    } else {
+      toast(result.message || "Upload failed");
+    }
+  } catch (error) {
+    console.error("Upload error:", error);
+    toast("Something went wrong during upload");
+  }
 });
 
 // --- Logout
