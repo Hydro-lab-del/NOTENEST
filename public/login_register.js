@@ -49,7 +49,7 @@ async function apiFetch(url, options = {}, retry = true) {
 registerForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const form = e.target();
+    const form = e.target;
     const username = form.username.value.trim();
     const email = form.email.value.trim();
     const password = form.password.value.trim();
