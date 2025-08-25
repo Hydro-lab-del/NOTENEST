@@ -59,7 +59,7 @@ fileInput.addEventListener('change', async () => {
   formData.append("profilePic", f);
 
   try {
-    const response = await fetch("/api/v1/users/upload-profile-pic", {
+    const response = await apiFetch("/api/v1/users/upload-profile-pic", {
       method: "POST",
       credentials: "include", // important for cookies
       body: formData
