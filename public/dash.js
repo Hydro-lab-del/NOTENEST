@@ -58,56 +58,26 @@ fileInput.addEventListener('change', async () => {
   const formData = new FormData();
   formData.append("profilePic", f);
 
-//   try {
-//     const response = await apiFetch("/api/v1/users/upload-profile-pic", {
-//       method: "POST",
-//       credentials: "include", // important for cookies
-//       body: formData
-//     });
+  try {
+    const response = await apiFetch("/api/v1/users/upload-profile-pic", {
+      method: "POST",
+      credentials: "include", // important for cookies
+      body: formData
+    });
 
-//     const result = await response.json();
+    const result = await response.json();
 
-//     if (response.ok) {
-//       toast("Profile picture uploaded successfully");
-//       console.log("Updated user:", result.data);
-//     } else {
-//       toast(result.message || "Upload failed");
-//     }
-//   } catch (error) {
-//     console.error("Upload error:", error);
-//     toast("Something went wrong during upload");
-//   }
-// });
-try {
-  const response = await apiFetch("/api/v1/users/upload-profile-pic", {
-    method: "POST",
-    body: formData
-  });
-
-  if (!response) return; // refresh failed and redirected
-
-  const contentType = response.headers.get("content-type");
-  let result;
-
-  if (contentType && contentType.includes("application/json")) {
-    result = await response.json();
-  } else {
-    const text = await response.text();
-    console.warn("Unexpected response format:", text);
-    toast("Upload failed: unexpected response");
-    return;
+    if (response.ok) {
+      toast("Profile picture uploaded successfully");
+      console.log("Updated user:", result.data);
+    } else {
+      toast(result.message || "Upload failed");
+    }
+  } catch (error) {
+    console.error("Upload error:", error);
+    toast("Something went wrong during upload");
   }
-
-  if (response.ok) {
-    toast("Profile picture uploaded successfully");
-    console.log("Updated user:", result.data);
-  } else {
-    toast(result.message || "Upload failed");
-  }
-} catch (error) {
-  console.error("Upload error:", error);
-  toast("Something went wrong during upload");
-}
+});
 
 // --- Logout
 logoutBtn.addEventListener("click", async () => {
