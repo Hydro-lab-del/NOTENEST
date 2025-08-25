@@ -2,6 +2,8 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { User } from "../model/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js";
+import jwt from "jsonwebtoken";
 
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -53,8 +55,9 @@ const registeruser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,         // ✅ required for HTTPS
-        sameSite: 'None'      // ✅ allows cross-origin cookies
+        secure: true,        // for HTTPS only
+        sameSite: "None",    // allows cross-site cookies
+        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
 
@@ -64,7 +67,8 @@ const registeruser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200,
                 {
-                    user: createdUser, accessToken, refreshToken
+                    user: createdUser,
+                    accessToken
                 },
                 "User Registered and logged In successfully"
             ))
@@ -72,6 +76,46 @@ const registeruser = asyncHandler(async (req, res) => {
 
 });
 
+// uploadProfilePic
+const uploadProfilePic = asyncHandler(async (req, res) => {
+    const profileLocalPath = req.file?.path;
+
+    if (!profileLocalPath) {
+        throw new ApiError(400, "Profile pic file is missing");
+    }
+
+    const profilePic = await uploadOnCloudinary(profileLocalPath);
+
+    if (!profilePic || !profilePic.secure_url || !profilePic.public_id) {
+        throw new ApiError(400, "Error while uploading to Cloudinary");
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // delete old pic if exists
+    if (user.profilePic?.public_id) {
+        await deleteFromCloudinary(user.profilePic.public_id);
+    }
+
+    // update new pic
+    user.profilePic = {
+        url: profilePic.secure_url,
+        public_id: profilePic.public_id
+    };
+
+    const updatedUser = await user.save();
+
+    const safeUser = await User.findById(updatedUser._id)
+        .select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(200, safeUser, "Profile picture updated successfully")
+    );
+});
 
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -90,7 +134,7 @@ const loginUser = asyncHandler(async (req, res) => {
     };
     const isPasswordValid = await user.isPasswordCorrect(password);
     if (!isPasswordValid) {
-        throw new ApiError(401, "invalid Password , please try again");
+        throw new ApiError(401, "Invalid Password , please try again");
     }
 
     const { refreshToken, accessToken } = await generateAccessAndRefreshTokens(user._id);
@@ -99,8 +143,9 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,         // ✅ required for HTTPS
-        sameSite: 'None'      // ✅ allows cross-origin cookies
+        secure: true,        // for HTTPS only
+        sameSite: "None",    // allows cross-site cookies
+        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
 
@@ -112,7 +157,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200,
                 {
-                    user: loggedInUser, accessToken, refreshToken
+                    user: loggedInUser, accessToken
                 },
                 "User logged In successfully"
             ))
@@ -126,7 +171,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         req.user._id,
         {
             $set: {
-                refreshToken: undefined
+                refreshToken: ""
             }
         },
         {
@@ -136,8 +181,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     console.log("User ID:", req.user?._id);
     const options = {
         httpOnly: true,
-        secure: true,         // ✅ required for HTTPS
-        sameSite: 'None'      // ✅ allows cross-origin cookies
+        secure: true,        // for HTTPS only
+        sameSite: "None",    // allows cross-site cookies
+        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
     return res
@@ -157,11 +203,16 @@ const getCurrentUser = async (req, res) => {
             return res.status(401).json({ message: "Unauthorized" });
         }
 
-        res.status(200).json({
-            name: user.username, // or user.fullName, depending on your schema
-            email: user.email,
-            id: user._id
-        });
+        return res.status(200).json(
+            new ApiResponse(200, {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                profilePic: user.profilePic?.url || null
+            }, "Fetched current user successfully")
+        );
+
+
     } catch (error) {
         res.status(500).json({ message: "Server error" });
     }
@@ -190,10 +241,13 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         };
 
         const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
+
+
         const options = {
             httpOnly: true,
-            secure: true,
-            sameSite: 'None'
+            secure: true,        // for HTTPS only
+            sameSite: "None",    // allows cross-site cookies
+            maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
         };
 
         return res
@@ -203,7 +257,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             .json(
                 new ApiResponse(200,
                     {
-                        accessToken, refreshToken: newRefreshToken
+                        accessToken
                     },
                     "Access Token refreshed"
                 )
@@ -215,7 +269,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { username, email } = req.body;
-    if (!username, !email) {
+    if (!username || !email) {
         throw new ApiError(400, "All  fields are required!")
     };
 
@@ -233,7 +287,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         )
 });
 
-export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken, updateAccountDetails }
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken, updateAccountDetails, uploadProfilePic }
 
 
 
