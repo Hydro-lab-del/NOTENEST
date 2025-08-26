@@ -56,7 +56,7 @@ const registeruser = asyncHandler(async (req, res) => {
     const options = {
         httpOnly: true,
         secure: true,        // for HTTPS only
-        sameSite: "None",    // allows cross-site cookies
+        sameSite: "Lax",    // allows cross-site cookies
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -144,7 +144,7 @@ const loginUser = asyncHandler(async (req, res) => {
     const options = {
         httpOnly: true,
         secure: true,        // for HTTPS only
-        sameSite: "None",    // allows cross-site cookies
+        sameSite: "Lax",    // allows cross-site cookies
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -182,7 +182,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     const options = {
         httpOnly: true,
         secure: true,        // for HTTPS only
-        sameSite: "None",    // allows cross-site cookies
+        sameSite: "Lax",    // allows cross-site cookies
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -246,7 +246,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         const options = {
             httpOnly: true,
             secure: true,        // for HTTPS only
-            sameSite: "None",    // allows cross-site cookies
+            sameSite: "Lax",    // allows cross-site cookies
             maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
         };
 
