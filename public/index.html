@@ -4,41 +4,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NoteNest - Login / Register</title>
-    <link rel="icon" type="image/png" href="./favicon.png">
+    <title>NoteNest</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="stylesheet" href="login_register.css">
 </head>
 
 <body>
 
-    <div class="auth-card">
-        <div class="logo">NoteNest</div>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" id="loginTab">Login</div>
-            <div class="tab" id="registerTab">Register</div>
+
+    <div class="main-container">
+
+        <div class="logo">
+            <h1>NoteNest</h1>
+
         </div>
 
-        <!-- Login Form -->
-        <form id="loginForm" class="active">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" class="btn">Login</button>
-            <p class="toggle-msg">Don’t have an account? <a id="switchToRegister">Register</a></p>
-        </form>
+        <div class="register-container">
+            <div class="center-container">
+                <h2 class="heading">Welcome to <span class="light-blue">NoteNest</span>
+                </h2>
 
-        <!-- Register Form -->
-        <form id="registerForm">
-            <input type="text" name="username" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit" class="btn">Create Account</button>
-            <p class="toggle-msg">Already have an account? <a id="switchToLogin">Login</a></p>
-        </form>
+                <p>Create your account</p>
+
+                <form class="register-form" id="registerForm">
+
+                    <input type="text" name="username" placeholder="Full Name" required>
+
+                    <input type="email" name="email" placeholder="Email" required>
+
+                    <input type="password" name="password" placeholder="Password" required>
+
+                    <span class="login-msg">Already have an Account? <a href="#" id="show-login">Login</a></span>
+
+                    <button type="submit" class="btn">Create My Account</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="login-container" id="login-container">
+
+            <div class="circle">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                    fill="#FFFFFF">
+                    <path d="m560-240-56-58 142-142H160v-80h486L504-662l56-58 240 240-240 240Z" />
+                </svg>
+            </div>
+            <div class="center-container">
+
+
+
+                <form action="" class="login-form" id="loginForm">
+                    <p>Login to your account</p>
+                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="password" name="password" placeholder="Password" required>
+                    <span class="login-msg">Don't have an account? <a href="#" id="show-register">Register here</a></span>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+            </div>
+        </div>
+
     </div>
 
-    <script src="login_register.js"></script>
+    <script src="loginAndRegister.js"></script>
+
 </body>
 
 </html>

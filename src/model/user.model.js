@@ -17,11 +17,6 @@ const userSchema = new mongoose.Schema(
             trim: true,
             unique: true
         },
-        profilePic: {
-            url: { type: String },
-            public_id: { type: String }
-        }
-        ,
         password: {
             type: String,
             required: true,

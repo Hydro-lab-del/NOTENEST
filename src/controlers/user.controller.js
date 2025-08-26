@@ -55,8 +55,8 @@ const registeruser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,        // for HTTPS only
-        sameSite: "Lax",    // allows cross-site cookies
+        secure: false,        // for HTTPS only
+        sameSite: "None",    
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -68,7 +68,6 @@ const registeruser = asyncHandler(async (req, res) => {
             new ApiResponse(200,
                 {
                     user: createdUser,
-                    accessToken
                 },
                 "User Registered and logged In successfully"
             ))
@@ -77,45 +76,7 @@ const registeruser = asyncHandler(async (req, res) => {
 });
 
 // uploadProfilePic
-const uploadProfilePic = asyncHandler(async (req, res) => {
-    const profileLocalPath = req.file?.path;
 
-    if (!profileLocalPath) {
-        throw new ApiError(400, "Profile pic file is missing");
-    }
-
-    const profilePic = await uploadOnCloudinary(profileLocalPath);
-
-    if (!profilePic || !profilePic.secure_url || !profilePic.public_id) {
-        throw new ApiError(400, "Error while uploading to Cloudinary");
-    }
-
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-        throw new ApiError(404, "User not found");
-    }
-
-    // delete old pic if exists
-    if (user.profilePic?.public_id) {
-        await deleteFromCloudinary(user.profilePic.public_id);
-    }
-
-    // update new pic
-    user.profilePic = {
-        url: profilePic.secure_url,
-        public_id: profilePic.public_id
-    };
-
-    const updatedUser = await user.save();
-
-    const safeUser = await User.findById(updatedUser._id)
-        .select("-password -refreshToken");
-
-    return res.status(200).json(
-        new ApiResponse(200, safeUser, "Profile picture updated successfully")
-    );
-});
 
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -143,8 +104,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,        // for HTTPS only
-        sameSite: "Lax",    // allows cross-site cookies
+        secure: false,        // for HTTPS only
+        sameSite: "None",    
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -157,7 +118,7 @@ const loginUser = asyncHandler(async (req, res) => {
         .json(
             new ApiResponse(200,
                 {
-                    user: loggedInUser, accessToken
+                    user: loggedInUser
                 },
                 "User logged In successfully"
             ))
@@ -181,8 +142,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     console.log("User ID:", req.user?._id);
     const options = {
         httpOnly: true,
-        secure: true,        // for HTTPS only
-        sameSite: "Lax",    // allows cross-site cookies
+        secure: false,        // for HTTPS only
+        sameSite: "None", 
         maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
     };
 
@@ -245,8 +206,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const options = {
             httpOnly: true,
-            secure: true,        // for HTTPS only
-            sameSite: "Lax",    // allows cross-site cookies
+            secure: false,        // for HTTPS only
+            sameSite: "None",    // allows cross-site cookies
             maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
         };
 
@@ -267,27 +228,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-const updateAccountDetails = asyncHandler(async (req, res) => {
-    const { username, email } = req.body;
-    if (!username || !email) {
-        throw new ApiError(400, "All  fields are required!")
-    };
 
-    const user = await User.findByIdAndUpdate(req.user?._id,
-        {
-            $set: { username, email: email }
-        },
-        { new: true }
-    ).select("-password")
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(200, user, "Account details updated Successfully")
-        )
-});
-
-export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken, updateAccountDetails, uploadProfilePic }
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken}
 
 
 
