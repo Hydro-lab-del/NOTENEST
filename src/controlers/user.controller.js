@@ -75,7 +75,65 @@ const registeruser = asyncHandler(async (req, res) => {
 });
 
 // uploadProfilePic
+const uploadProfilePic = asyncHandler(async (req, res) => {
+    const profileLocalPath = req.file?.path;
 
+    if (!profileLocalPath) {
+        throw new ApiError(400, "Profile pic file is missing");
+    }
+
+    const profilePic = await uploadOnCloudinary(profileLocalPath);
+
+    if (!profilePic || !profilePic.secure_url || !profilePic.public_id) {
+        throw new ApiError(400, "Error while uploading to Cloudinary");
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        throw new ApiError(404, "User not found");
+    }
+
+    // delete old pic if exists
+    if (user.profilePic?.public_id) {
+        await deleteFromCloudinary(user.profilePic.public_id);
+    }
+
+    // update new pic
+    user.profilePic = {
+        url: profilePic.secure_url,
+        public_id: profilePic.public_id
+    };
+
+    const updatedUser = await user.save();
+
+    const safeUser = await User.findById(updatedUser._id)
+        .select("-password -refreshToken");
+
+    return res.status(200).json(
+        new ApiResponse(200, safeUser, "Profile picture updated successfully")
+    );
+});
+
+const updateAccountDetails = asyncHandler(async (req, res) => {
+    const { username, email } = req.body;
+    if (!username || !email) {
+        throw new ApiError(400, "All  fields are required!")
+    };
+
+    const user = await User.findByIdAndUpdate(req.user?._id,
+        {
+            $set: { username, email: email }
+        },
+        { new: true }
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user, "Account details updated Successfully")
+        )
+});
 
 
 const loginUser = asyncHandler(async (req, res) => {
@@ -209,7 +267,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 
 
-export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken }
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken, updateAccountDetails, uploadProfilePic  }
 
 
 
