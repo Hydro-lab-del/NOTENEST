@@ -26,7 +26,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const options = {
     httpOnly: true,               // Keeps cookie inaccessible to client-side JS
     secure: true,                 // Ensures cookie is sent only over HTTPS
-    sameSite: "Strict",           // Best protection for same-domain setups
+    sameSite: "Lax",           // Best protection for same-domain setups
     maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
 };
 

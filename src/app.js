@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
-
+import cors from "cors";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -9,6 +9,10 @@ const app = express();
 const __dirname = path.resolve();
 
 
+app.use(cors({
+    origin:"https://notenest-odgc.onrender.com/",
+    credentials: true
+}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
