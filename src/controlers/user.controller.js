@@ -23,6 +23,13 @@ const generateAccessAndRefreshTokens = async (userId) => {
     }
 };
 
+const options = {
+    httpOnly: true,               // Keeps cookie inaccessible to client-side JS
+    secure: true,                 // Ensures cookie is sent only over HTTPS
+    sameSite: "Strict",           // Best protection for same-domain setups
+    maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
+};
+
 
 const registeruser = asyncHandler(async (req, res) => {
     const { username, email, password } = req.body;
@@ -52,14 +59,6 @@ const registeruser = asyncHandler(async (req, res) => {
     if (!createdUser) {
         throw new ApiError(500, "something went wrong while registring the user")
     };
-
-    const options = {
-        httpOnly: true,
-        secure: false,        // for HTTPS only
-        sameSite: "None",    
-        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
-    };
-
 
     return res.status(201)
         .cookie("accessToken", accessToken, options)
@@ -102,12 +101,6 @@ const loginUser = asyncHandler(async (req, res) => {
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
 
-    const options = {
-        httpOnly: true,
-        secure: false,        // for HTTPS only
-        sameSite: "None",    
-        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
-    };
 
 
 
@@ -140,12 +133,6 @@ const logoutUser = asyncHandler(async (req, res) => {
         }
     );
     console.log("User ID:", req.user?._id);
-    const options = {
-        httpOnly: true,
-        secure: false,        // for HTTPS only
-        sameSite: "None", 
-        maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
-    };
 
     return res
         .status(200)
@@ -203,14 +190,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
         const { accessToken, refreshToken: newRefreshToken } = await generateAccessAndRefreshTokens(user._id);
 
-
-        const options = {
-            httpOnly: true,
-            secure: false,        // for HTTPS only
-            sameSite: "None",    // allows cross-site cookies
-            maxAge: parseInt(process.env.COOKIE_EXPIRY) || 7 * 24 * 60 * 60 * 1000 // fallback: 7 days
-        };
-
         return res
             .status(200)
             .cookie("accessToken", accessToken, options)
@@ -230,7 +209,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 
 
-export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken}
+export { registeruser, loginUser, logoutUser, getCurrentUser, refreshAccessToken }
 
 
 
