@@ -40,7 +40,7 @@ async function apiFetch(url, options = {}, retry = true) {
                 credentials: "include"
             });
         if (refreshRes.ok) return apiFetch(url, options, false);
-        else { window.location.href = "/index.html"; return; }
+        else { window.location.href = "/log.html"; return; }
     }
     return res;
 }
