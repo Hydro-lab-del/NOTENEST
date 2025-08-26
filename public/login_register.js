@@ -34,7 +34,7 @@ async function apiFetch(url, options = {}, retry = true) {
         });
     // If unauthorized (token expired) and retry allowed
     if (res.status === 401 && retry) {
-        const refreshRes = await fetch("/api/v1/users/refresh-token",
+        const refreshRes = await fetch("https://notenest-odgc.onrender.com/api/v1/users/refresh-token",
             {
                 method: "POST",
                 credentials: "include"
@@ -54,7 +54,7 @@ registerForm.addEventListener("submit", async (e) => {
     const email = form.email.value.trim();
     const password = form.password.value.trim();
 
-    const res = await fetch("/api/v1/users/register", {
+    const res = await fetch("https://notenest-odgc.onrender.com/api/v1/users/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -72,7 +72,7 @@ loginForm.addEventListener("submit", async (e) => {
     const email = form.email.value.trim();
     const password = form.password.value.trim();
     
-    const res = await fetch("/api/v1/users/login", {
+    const res = await fetch("https://notenest-odgc.onrender.com/api/v1/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -81,3 +81,17 @@ loginForm.addEventListener("submit", async (e) => {
     if (res.ok) window.location.href = "/dashboard.html";
     else alert("Login failed!");
 });
+
+// Example dashboard call with auto-refresh
+async function loadNotes() {
+    const res = await apiFetch("https://notenest-odgc.onrender.com/api/v1/notes");
+    if (res && res.ok) {
+        const notes = await res.json();
+        console.log(notes);
+    }
+}
+
+// Call loadNotes on dashboard load
+if (window.location.pathname.includes("dashboard.html")) {
+    loadNotes();
+}

@@ -59,7 +59,7 @@ fileInput.addEventListener('change', async () => {
   formData.append("profilePic", f);
 
   try {
-    const response = await apiFetch("/api/v1/users/upload-profile-pic", {
+    const response = await apiFetch("https://notenest-odgc.onrender.com/api/v1/users/upload-profile-pic", {
       method: "POST",
       credentials: "include", // important for cookies
       body: formData
@@ -82,7 +82,7 @@ fileInput.addEventListener('change', async () => {
 // --- Logout
 logoutBtn.addEventListener("click", async () => {
   try {
-    const response = await apiFetch("/api/v1/users/logout", {
+    const response = await apiFetch("https://notenest-odgc.onrender.com/api/v1/users/logout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });
@@ -115,7 +115,7 @@ async function apiFetch(url, options = {}, retry = true) {
 
   if (res.status === 401 && retry) {
     console.warn("Access token expired, trying refresh...");
-    const refreshRes = await fetch("/api/v1/users/refresh-token", {
+    const refreshRes = await fetch("https://notenest-odgc.onrender.com/api/v1/users/refresh-token", {
       method: "POST",
       credentials: "include"
     });
@@ -143,7 +143,7 @@ noteForm.addEventListener("submit", async function (e) {
   }
 
   try {
-    const response = await apiFetch("/api/v1/notes/create", {
+    const response = await apiFetch("https://notenest-odgc.onrender.com/api/v1/notes/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title, content }),
@@ -166,7 +166,7 @@ noteForm.addEventListener("submit", async function (e) {
 // --- Load Notes
 async function loadNotes() {
   try {
-    const response = await apiFetch("/api/v1/notes", { method: "GET" });
+    const response = await apiFetch("https://notenest-odgc.onrender.com/api/v1/notes", { method: "GET" });
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || "Failed to load notes");
 
@@ -229,7 +229,7 @@ function attachNoteActions() {
         const updatedTitle = titleEl.textContent.trim();
 
         try {
-          const res = await apiFetch(`/api/v1/notes/${noteId}`, {
+          const res = await apiFetch(`https://notenest-odgc.onrender.com/api/v1/notes/${noteId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: updatedTitle, content: updatedContent })
@@ -255,7 +255,7 @@ function attachNoteActions() {
       if (!confirm("Are you sure you want to delete this note?")) return;
 
       try {
-        const res = await apiFetch(`/api/v1/notes/${noteId}`, {
+        const res = await apiFetch(`https://notenest-odgc.onrender.com/api/v1/notes/${noteId}`, {
           method: "DELETE",
         });
 
@@ -276,7 +276,7 @@ function attachNoteActions() {
       const noteId = note.dataset.id;
 
       try {
-        const res = await apiFetch(`/api/v1/notes/${noteId}/pin`, {
+        const res = await apiFetch(`https://notenest-odgc.onrender.com/api/v1/notes/${noteId}/pin`, {
           method: "PUT",
         });
 
@@ -312,7 +312,7 @@ updateForm.addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
 
   try {
-    const res = await apiFetch("/api/v1/users/update-account", {
+    const res = await apiFetch("https://notenest-odgc.onrender.com/api/v1/users/update-account", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, email })
@@ -331,7 +331,7 @@ updateForm.addEventListener("submit", async (e) => {
 // --- Populate user info
 (async () => {
   try {
-    const res = await apiFetch("/api/v1/users/current-user", {
+    const res = await apiFetch("https://notenest-odgc.onrender.com/api/v1/users/current-user", {
       method: "GET"
     });
     if (res.ok) {
