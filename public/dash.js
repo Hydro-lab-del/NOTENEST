@@ -207,6 +207,7 @@ async function loadNotes() {
   }
 }
 
+//edit notes
 function attachNoteActions() {
   document.querySelectorAll(".edit-icon").forEach(icon => {
     icon.addEventListener("click", async () => {
@@ -247,6 +248,7 @@ function attachNoteActions() {
     });
   });
 
+  //delete notes
   document.querySelectorAll(".delete").forEach(icon => {
     icon.addEventListener("click", async () => {
       const note = icon.closest(".note");
@@ -270,6 +272,8 @@ function attachNoteActions() {
     });
   });
 
+
+//pin notes
   document.querySelectorAll(".pin-icon").forEach(icon => {
     icon.addEventListener("click", async () => {
       const note = icon.closest(".note");
