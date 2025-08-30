@@ -337,13 +337,21 @@ updateForm.addEventListener("submit", async (e) => {
     const res = await apiFetch("https://notenest-odgc.onrender.com/api/v1/users/current-user", {
       method: "GET"
     });
-    if (res.ok) {
-      const result = await res.json();
-      const data = result.data; // your ApiResponse wraps it
-      document.getElementById('userName').textContent = data.username || 'User';
-      document.getElementById('userEmail').textContent = data.email || '';
-      document.querySelector("#avatarImg").src = data.profilePic || '/pic.png';
-    }
+
+    if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+    const { data } = await res.json();
+
+    // Update text content
+    document.getElementById('userName').textContent = data.username ?? 'User';
+    document.getElementById('userEmail').textContent = data.email ?? '';
+
+    // Update profile images
+    const profilePic = data.profilePic ?? '/pic.png';
+    document.querySelectorAll('#avatarImg, #largeImg').forEach(img => {
+      if (img) img.src = profilePic;
+    });
+
   } catch (error) {
     console.error('Failed to fetch user data:', error);
   }
