@@ -342,7 +342,7 @@ updateForm.addEventListener("submit", async (e) => {
       const data = result.data; // your ApiResponse wraps it
       document.getElementById('userName').textContent = data.username || 'User';
       document.getElementById('userEmail').textContent = data.email || '';
-      document.querySelector("#avatarImg").src = data.profilePic.url || '/pic.png';
+      document.querySelector("#avatarImg").src = data.profilePic || '/pic.png';
     }
   } catch (error) {
     console.error('Failed to fetch user data:', error);
