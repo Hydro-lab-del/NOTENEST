@@ -10,7 +10,11 @@ const storage = multer.diskStorage({
         cb(null, uploadPath);
     },
     filename: function (_, file, cb) {
-        cb(null, Date.now() + "-" + file.originalname); // unique naming
+        const uniqueSuffix = Date.now() + '_' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname); // Get original file extension
+        cb(null, file.fieldname + '_' + uniqueSuffix + ext);
+
+
     }
 });
 const fileFilter = (_, file, cb) => {
