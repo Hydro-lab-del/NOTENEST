@@ -69,7 +69,6 @@ fileInput.addEventListener('change', async () => {
 
     if (response.ok) {
       toast("Profile picture uploaded successfully");
-      console.log("Updated user:", result.data);
     } else {
       toast(result.message || "Upload failed");
     }
@@ -343,6 +342,7 @@ updateForm.addEventListener("submit", async (e) => {
       const data = result.data; // your ApiResponse wraps it
       document.getElementById('userName').textContent = data.username || 'User';
       document.getElementById('userEmail').textContent = data.email || '';
+      document.querySelector("#avatarImg").src = data.profilePic.url || '/pic.png';
     }
   } catch (error) {
     console.error('Failed to fetch user data:', error);
